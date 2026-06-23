@@ -1,26 +1,94 @@
 @import "tailwindcss";
 
+/* Configuration des variables de thèmes */
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #090c15;
+  --card-bg: rgba(243, 244, 246, 0.7);
+  --border-color: rgba(0, 0, 0, 0.08);
+  --primary: #7c3aed;
+  --primary-hover: #6d28d9;
+  --text-main: #1f2937;
+  --text-muted: #6b7280;
+  --glow: rgba(124, 58, 237, 0.05);
+  --bg-side: #f3f4f6;
+  --col-dot-bg: #e5e7eb;
+
+  --col-to-apply: #6b7280;
+  --col-applied: #3b82f6;
+  --col-interview: #d97706;
+  --col-offer: #059669;
+  --col-refused: #dc2626;
 }
 
-@theme inline {
+/* Thème sombre par défaut */
+html,
+html.dark {
+  --background: #080b11;
+  --foreground: #f3f4f6;
+  --card-bg: rgba(22, 30, 49, 0.7);
+  --border-color: rgba(255, 255, 255, 0.08);
+  --primary: #8b5cf6;
+  --primary-hover: #7c3aed;
+  --text-main: #f3f4f6;
+  --text-muted: #9ca3af;
+  --glow: rgba(139, 92, 246, 0.15);
+  --bg-side: #0e1322;
+  --col-dot-bg: rgba(255, 255, 255, 0.05);
+
+  --col-to-apply: #6b7280;
+  --col-applied: #3b82f6;
+  --col-interview: #f59e0b;
+  --col-offer: #10b981;
+  --col-refused: #ef4444;
+}
+
+/* Thème clair explicite */
+html.light {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --card-bg: rgba(255, 255, 255, 0.8);
+  --border-color: rgba(15, 23, 42, 0.08);
+  --primary: #7c3aed;
+  --primary-hover: #6d28d9;
+  --text-main: #334155;
+  --text-muted: #64748b;
+  --glow: rgba(124, 58, 237, 0.05);
+  --bg-side: #ffffff;
+  --col-dot-bg: #f1f5f9;
+
+  --col-to-apply: #64748b;
+  --col-applied: #2563eb;
+  --col-interview: #d97706;
+  --col-offer: #16a34a;
+  --col-refused: #dc2626;
+}
+
+/* Extension du thème dans Tailwind CSS v4 */
+@theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-card-bg: var(--card-bg);
+  --color-border-color: var(--border-color);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-text-main: var(--text-main);
+  --color-text-muted: var(--text-muted);
+  --color-bg-side: var(--bg-side);
+  --color-col-dot-bg: var(--col-dot-bg);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-col-to-apply: var(--col-to-apply);
+  --color-col-applied: var(--col-applied);
+  --color-col-interview: var(--col-interview);
+  --color-col-offer: var(--col-offer);
+  --color-col-refused: var(--col-refused);
+
+  --font-sans: 'Inter', sans-serif;
+  --font-display: 'Outfit', sans-serif;
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
