@@ -9,6 +9,9 @@ export type KanbanColumn = Column & {
   jobApplications: (JobApplication & {
     company: Company
     tags: Tag[]
+    notes: Note[]
+    events: Event[]
+    contacts: Contact[]
   })[]
 }
 

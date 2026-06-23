@@ -105,7 +105,10 @@ export class JobService {
           where: { deletedAt: null },
           include: {
             company: true,
-            tags: true
+            tags: true,
+            notes: { orderBy: { createdAt: 'desc' } },
+            events: { orderBy: { date: 'asc' } },
+            contacts: true
           },
           orderBy: { order: 'asc' }
         }
@@ -140,7 +143,10 @@ export class JobService {
             where: { deletedAt: null },
             include: {
               company: true,
-              tags: true
+              tags: true,
+              notes: { orderBy: { createdAt: 'desc' } },
+              events: { orderBy: { date: 'asc' } },
+              contacts: true
             },
             orderBy: { order: 'asc' }
           }
