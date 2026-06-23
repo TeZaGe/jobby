@@ -1,0 +1,40 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main, dev ]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: TypeScript Compile Check
+        run: npx tsc --noEmit
+
+      - name: Prisma Schema Validation
+        run: npx prisma validate
+
+      - name: Build Next.js application
+        run: npm run build
+        env:
+          NEXT_PUBLIC_API_URL: https://dummy-url.vercel.app
+          DATABASE_URL: postgresql://postgres:postgres_password@localhost:5432/job_crm
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}

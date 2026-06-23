@@ -1,0 +1,158 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ==========================================
+// AUTHENTICATION MODELS (NextAuth.js v5 / Auth.js)
+// ==========================================
+
+model User {
+  id              String           @id @default(cuid())
+  name            String?
+  email           String           @unique
+  emailVerified   DateTime?
+  image           String?
+  passwordHash    String?          // Hash du mot de passe pour la connexion classique
+  extensionToken  String?          @unique // Jeton unique d'authentification pour l'extension Chrome/Firefox
+  accounts        Account[]
+  sessions        Session[]
+  columns         Column[]         // Colonnes personnalisées du tableau Kanban de l'utilisateur
+  jobApplications JobApplication[] // Candidatures de l'utilisateur
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+// ==========================================
+// JOB CRM MODELS
+// ==========================================
+
+model Column {
+  id              String           @id @default(cuid())
+  name            String           // e.g., "À postuler", "Postulé", "Entretien", "Offre", "Refusé"
+  order           Int              // Position d'affichage de la colonne sur le Kanban
+  color           String?          // Couleur associée (classe CSS ou code hexa pour l'UI)
+  userId          String
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobApplications JobApplication[]
+
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  @@unique([userId, name])
+  @@unique([userId, order])
+}
+
+model JobApplication {
+  id              String    @id @default(cuid())
+  title           String    // Intitulé du poste
+  company         String    // Nom de l'entreprise
+  location        String?   // Paris, Télétravail, Lyon, etc.
+  description     String?   // Description de l'offre (texte ou markdown)
+  url             String?   // Lien vers l'annonce d'origine
+  salary          String?   // Rémunération indiquée (ex: "45k - 50k", "3200€/mois")
+  source          String?   // Source de l'offre ("LinkedIn", "Welcome to the Jungle", "Extension Chrome", etc.)
+  
+  // Contacts associés à cette offre (Recruteur, Manager, etc.)
+  contactName     String?
+  contactEmail    String?
+  contactPhone    String?
+  
+  // Positionnement Kanban
+  columnId        String
+  column          Column    @relation(fields: [columnId], references: [id], onDelete: Cascade)
+  order           Int       // Ordre d'affichage des cartes au sein de la colonne
+  
+  // Propriétaire de la candidature
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Données associées
+  notes           Note[]
+  events          Event[]
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([columnId])
+}
+
+model Note {
+  id               String         @id @default(cuid())
+  content          String         // Contenu textuel/markdown de la note
+  jobApplicationId String
+  jobApplication   JobApplication @relation(fields: [jobApplicationId], references: [id], onDelete: Cascade)
+  
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  @@index([jobApplicationId])
+}
+
+model Event {
+  id               String         @id @default(cuid())
+  title            String         // Titre de l'événement (ex: "Entretien RH", "Relancer par mail")
+  type             EventType      @default(TASK)
+  date             DateTime       // Date et heure de l'événement
+  completed        Boolean        @default(false)
+  jobApplicationId String
+  jobApplication   JobApplication @relation(fields: [jobApplicationId], references: [id], onDelete: Cascade)
+
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  @@index([jobApplicationId])
+}
+
+enum EventType {
+  INTERVIEW
+  FOLLOW_UP
+  TASK
+  MEETING
+}
