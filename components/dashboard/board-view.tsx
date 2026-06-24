@@ -28,7 +28,8 @@ import {
   ChevronDown,
   ChevronRight,
   FileText,
-  Upload
+  Upload,
+  Eye
 } from 'lucide-react'
 import Link from 'next/link'
 import { KanbanColumn } from '@/types'
@@ -108,6 +109,9 @@ export function BoardView({ initialColumns, userId, boardId, boardName, boardEmo
   // Onglet actif pour la modale de détails
   const [activeTab, setActiveTab] = React.useState<'info' | 'notes' | 'contacts' | 'documents' | 'history'>('info')
 
+  // Document à prévisualiser dans l'onglet Documents
+  const [previewDoc, setPreviewDoc] = React.useState<{ id: string; name: string; url: string; type: string } | null>(null)
+
   // Sélecteur de board et modal de création de board
   const [showBoardDropdown, setShowBoardDropdown] = React.useState(false)
   const [showCreateBoardModal, setShowCreateBoardModal] = React.useState(false)
@@ -139,6 +143,7 @@ export function BoardView({ initialColumns, userId, boardId, boardName, boardEmo
   // Chargement des données dans le formulaire d'édition au clic sur une carte
   const handleOpenModal = (job: ClientJob) => {
     setActiveTab('info')
+    setPreviewDoc(null)
     setSelectedJob(job)
     setEditTitle(job.title)
     setEditLocation(job.location || '')
@@ -1795,7 +1800,10 @@ export function BoardView({ initialColumns, userId, boardId, boardName, boardEmo
                         {selectedJob.documents?.find(d => d.type === 'CV') && (
                           <button
                             type="button"
-                            onClick={() => handleDeleteDocument(selectedJob.documents.find(d => d.type === 'CV')!.id)}
+                            onClick={() => {
+                              handleDeleteDocument(selectedJob.documents.find(d => d.type === 'CV')!.id)
+                              setPreviewDoc(null)
+                            }}
                             className="text-text-muted hover:text-red-400 p-0.5 rounded cursor-pointer transition-colors"
                             title="Supprimer le CV"
                           >
@@ -1805,22 +1813,33 @@ export function BoardView({ initialColumns, userId, boardId, boardName, boardEmo
                       </div>
 
                       {selectedJob.documents?.find(d => d.type === 'CV') ? (
-                        <a
-                          href={selectedJob.documents.find(d => d.type === 'CV')!.url}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-xs font-medium text-purple-400 hover:underline flex items-center gap-1.5"
-                        >
-                          <ExternalLink size={12} />
-                          <span className="truncate max-w-[200px]">{selectedJob.documents.find(d => d.type === 'CV')!.name}</span>
-                        </a>
+                        <div className="flex flex-col gap-1">
+                          <button
+                            type="button"
+                            onClick={() => setPreviewDoc(selectedJob.documents.find(d => d.type === 'CV')!)}
+                            className="text-xs font-semibold text-purple-400 hover:text-primary transition-colors text-left truncate max-w-[250px] cursor-pointer hover:underline flex items-center gap-1.5"
+                            title="Cliquer pour prévisualiser"
+                          >
+                            <Eye size={12} className="flex-shrink-0" />
+                            {selectedJob.documents.find(d => d.type === 'CV')!.name}
+                          </button>
+                          <a
+                            href={selectedJob.documents.find(d => d.type === 'CV')!.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-[10px] text-text-muted hover:text-foreground flex items-center gap-1"
+                          >
+                            <ExternalLink size={10} />
+                            Ouvrir dans un nouvel onglet ↗
+                          </a>
+                        </div>
                       ) : (
                         <label className="flex items-center gap-1.5 text-xs text-text-muted cursor-pointer hover:text-foreground">
                           <Upload size={12} />
                           <span>Choisir un fichier CV</span>
                           <input
                             type="file"
-                            accept=".pdf,.doc,.docx"
+                            accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.txt"
                             className="hidden"
                             onChange={(e) => handleUploadDocument(e, 'CV')}
                           />
@@ -1835,7 +1854,10 @@ export function BoardView({ initialColumns, userId, boardId, boardName, boardEmo
                         {selectedJob.documents?.find(d => d.type === 'COVER_LETTER') && (
                           <button
                             type="button"
-                            onClick={() => handleDeleteDocument(selectedJob.documents.find(d => d.type === 'COVER_LETTER')!.id)}
+                            onClick={() => {
+                              handleDeleteDocument(selectedJob.documents.find(d => d.type === 'COVER_LETTER')!.id)
+                              setPreviewDoc(null)
+                            }}
                             className="text-text-muted hover:text-red-400 p-0.5 rounded cursor-pointer transition-colors"
                             title="Supprimer la LM"
                           >
@@ -1845,22 +1867,33 @@ export function BoardView({ initialColumns, userId, boardId, boardName, boardEmo
                       </div>
 
                       {selectedJob.documents?.find(d => d.type === 'COVER_LETTER') ? (
-                        <a
-                          href={selectedJob.documents.find(d => d.type === 'COVER_LETTER')!.url}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-xs font-medium text-purple-400 hover:underline flex items-center gap-1.5"
-                        >
-                          <ExternalLink size={12} />
-                          <span className="truncate max-w-[200px]">{selectedJob.documents.find(d => d.type === 'COVER_LETTER')!.name}</span>
-                        </a>
+                        <div className="flex flex-col gap-1">
+                          <button
+                            type="button"
+                            onClick={() => setPreviewDoc(selectedJob.documents.find(d => d.type === 'COVER_LETTER')!)}
+                            className="text-xs font-semibold text-purple-400 hover:text-primary transition-colors text-left truncate max-w-[250px] cursor-pointer hover:underline flex items-center gap-1.5"
+                            title="Cliquer pour prévisualiser"
+                          >
+                            <Eye size={12} className="flex-shrink-0" />
+                            {selectedJob.documents.find(d => d.type === 'COVER_LETTER')!.name}
+                          </button>
+                          <a
+                            href={selectedJob.documents.find(d => d.type === 'COVER_LETTER')!.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-[10px] text-text-muted hover:text-foreground flex items-center gap-1"
+                          >
+                            <ExternalLink size={10} />
+                            Ouvrir dans un nouvel onglet ↗
+                          </a>
+                        </div>
                       ) : (
                         <label className="flex items-center gap-1.5 text-xs text-text-muted cursor-pointer hover:text-foreground">
                           <Upload size={12} />
                           <span>Choisir un fichier Lettre</span>
                           <input
                             type="file"
-                            accept=".pdf,.doc,.docx"
+                            accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.txt"
                             className="hidden"
                             onChange={(e) => handleUploadDocument(e, 'COVER_LETTER')}
                           />
@@ -1868,6 +1901,60 @@ export function BoardView({ initialColumns, userId, boardId, boardName, boardEmo
                       )}
                     </div>
                   </div>
+
+                  {/* Zone de prévisualisation de document intégrée */}
+                  {previewDoc && (
+                    <div className="mt-6 border-t border-border-color pt-4 flex flex-col gap-3 animate-slide-up">
+                      <div className="flex justify-between items-center bg-foreground/2 px-4 py-2 rounded-xl border border-border-color">
+                        <span className="text-xs font-semibold truncate text-foreground flex items-center gap-1.5">
+                          <FileText size={14} className="text-primary" />
+                          Aperçu : {previewDoc.name}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setPreviewDoc(null)}
+                          className="text-text-muted hover:text-foreground text-xs font-bold px-2.5 py-1 rounded-lg hover:bg-foreground/5 transition-colors cursor-pointer"
+                        >
+                          Masquer l'aperçu
+                        </button>
+                      </div>
+                      <div className="bg-foreground/2 border border-border-color rounded-xl overflow-hidden h-[450px] flex items-center justify-center relative">
+                        {previewDoc.url.toLowerCase().endsWith('.pdf') ? (
+                          <iframe 
+                            src={previewDoc.url} 
+                            className="w-full h-full border-none"
+                            title="Aperçu PDF"
+                          />
+                        ) : previewDoc.url.toLowerCase().match(/\.(png|jpe?g|gif|webp)$/) ? (
+                          <img 
+                            src={previewDoc.url} 
+                            alt={previewDoc.name}
+                            className="max-w-full max-h-full object-contain p-2"
+                          />
+                        ) : previewDoc.url.toLowerCase().endsWith('.txt') ? (
+                          <iframe 
+                            src={previewDoc.url} 
+                            className="w-full h-full border-none p-4 bg-foreground/2 text-xs font-mono text-foreground"
+                            title="Aperçu Texte"
+                          />
+                        ) : (
+                          <div className="text-center p-6 flex flex-col items-center gap-2">
+                            <FileText size={48} className="text-text-muted opacity-40 animate-pulse" />
+                            <p className="text-xs font-semibold">Prévisualisation non supportée localement pour ce format</p>
+                            <a 
+                              href={previewDoc.url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-xs text-purple-400 hover:underline flex items-center gap-1 mt-1 font-semibold"
+                            >
+                              <ExternalLink size={12} />
+                              Ouvrir dans un nouvel onglet
+                            </a>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 

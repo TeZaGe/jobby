@@ -40,11 +40,34 @@ export async function POST(
       )
     }
 
+    // 1. Validation de la taille (max 10 Mo)
+    const MAX_SIZE = 10 * 1024 * 1024
+    if (file.size > MAX_SIZE) {
+      return NextResponse.json(
+        { error: { code: 'FILE_TOO_LARGE', message: 'Le fichier dépasse la taille maximale autorisée (10 Mo).' } },
+        { status: 400 }
+      )
+    }
+
+    // 2. Validation de l'extension du fichier (XSS prevention)
+    const allowedExtensions = ['.pdf', '.doc', '.docx', '.png', '.jpg', '.jpeg', '.txt']
+    const ext = path.extname(file.name).toLowerCase()
+    if (!allowedExtensions.includes(ext)) {
+      return NextResponse.json(
+        { error: { code: 'INVALID_FILE_TYPE', message: 'Extension de fichier non autorisée. (Extensions permises : .pdf, .doc, .docx, .png, .jpg, .jpeg, .txt)' } },
+        { status: 400 }
+      )
+    }
+
+    // 3. Assainissement du nom de fichier (Path Traversal prevention)
+    const baseName = path.basename(file.name)
+    const cleanName = baseName.replace(/[^a-zA-Z0-9.-]/g, '_')
+    const uniqueFilename = `${Date.now()}-${cleanName}`
+
     // Sauvegarde physique du fichier dans public/uploads
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
 
-    const uniqueFilename = `${Date.now()}-${file.name.replace(/\s+/g, '_')}`
     const uploadDir = path.join(process.cwd(), 'public', 'uploads')
     await fs.mkdir(uploadDir, { recursive: true })
     const filePath = path.join(uploadDir, uniqueFilename)
