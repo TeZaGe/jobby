@@ -33,14 +33,13 @@ export default async function CompanyPage() {
     orderBy: { name: 'asc' }
   })
 
-  // Passage de types compatibles avec l'interface Company du composant
-  const companiesData = companies.map(c => ({
+  const companiesData = companies.map((c: any) => ({
     id: c.id,
     name: c.name,
     website: c.website,
     logoUrl: c.logoUrl,
     _count: c._count,
-    jobApplications: c.jobApplications.map(j => ({
+    jobApplications: c.jobApplications.map((j: any) => ({
       id: j.id,
       title: j.title,
       column: j.column ? { name: j.column.name, color: j.column.color ?? '#6b7280' } : null
