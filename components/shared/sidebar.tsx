@@ -10,7 +10,7 @@ import {
 import { useTheme } from 'next-themes'
 import { handleSignOut } from '@/app/actions/auth'
 import Image from 'next/image'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 interface SidebarProps {
   user?: {
@@ -24,6 +24,10 @@ export function Sidebar({ user }: SidebarProps) {
   const pathname = usePathname()
   const { theme, setTheme } = useTheme()
   const [collapsed, setCollapsed] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  // Montage coté client uniquement pour éviter le mismatch d'hydratation
+  useEffect(() => { setMounted(true) }, [])
 
   const menuItems = [
     { name: 'Mes Tableaux', href: '/boards', icon: LayoutGrid },
@@ -161,7 +165,9 @@ export function Sidebar({ user }: SidebarProps) {
             className="w-8 h-8 rounded-lg flex items-center justify-center text-text-muted hover:text-foreground hover:bg-foreground/5 transition-all duration-200 flex-shrink-0"
             aria-label="Changer de thème"
           >
-            {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
+            {/* Affiché uniquement après le mount pour éviter le mismatch hydration */}
+            {mounted && (theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />)}
+            {!mounted && <div className="w-3.5 h-3.5 rounded-full bg-border-color" />}
           </button>
         </div>
       </div>
