@@ -77,7 +77,7 @@ export async function GET() {
       }
     })
 
-    const byStatus = Object.entries(statusCounts).map(([name, data]) => ({
+    const byStatus = Object.entries(statusCounts).map(([name, data]: any) => ({
       name,
       value: data.count,
       color: data.color
@@ -85,7 +85,7 @@ export async function GET() {
 
     // 2. Response Rate calculation
     // Response = (Interview, Offer, Refusal) / (Total applied)
-    const respondedCount = jobs.filter(job => {
+    const respondedCount = jobs.filter((job: any) => {
       const lowerCol = job.column.name.toLowerCase()
       return (
         lowerCol.includes('entretien') ||
@@ -111,8 +111,8 @@ export async function GET() {
     })
 
     const byLocation = Object.entries(locationCounts)
-      .map(([location, count]) => ({ location, count }))
-      .sort((a, b) => b.count - a.count)
+      .map(([location, count]: any) => ({ location, count }))
+      .sort((a: any, b: any) => b.count - a.count)
       .slice(0, 10) // top 10 zones
 
     // 4. CV A/B Testing Stats
@@ -147,7 +147,7 @@ export async function GET() {
       }
     })
 
-    const byCv = Object.entries(cvStats).map(([name, data]) => {
+    const byCv = Object.entries(cvStats).map(([name, data]: any) => {
       const successRate = data.total > 0 
         ? Math.round((data.interviews / data.total) * 100) 
         : 0
@@ -159,7 +159,7 @@ export async function GET() {
         offers: data.offers,
         successRate
       }
-    }).sort((a, b) => b.successRate - a.successRate)
+    }).sort((a: any, b: any) => b.successRate - a.successRate)
 
     // 5. Activity over time (last 6 months)
     const monthNames = ['Janv.', 'Févr.', 'Mars', 'Avril', 'Mai', 'Juin', 'Juil.', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.']
@@ -199,7 +199,7 @@ export async function GET() {
     })
 
     const byMonth = Object.values(activityCounts)
-      .sort((a, b) => a.index - b.index)
+      .sort((a: any, b: any) => a.index - b.index)
       .map((item: any) => ({
         month: item.key,
         applications: item.applications,
