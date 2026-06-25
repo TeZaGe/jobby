@@ -5,9 +5,6 @@ import { db } from '@/lib/db'
 import { hashPassword } from '@/lib/crypto'
 import { AuthError } from 'next-auth'
 
-export async function handleGoogleSignIn() {
-  await signIn('google', { redirectTo: '/dashboard' })
-}
 
 export async function handleSignOut() {
   await signOut({ redirectTo: '/' })

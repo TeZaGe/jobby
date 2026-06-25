@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { handleCredentialsSignIn, handleCredentialsSignUp, handleGoogleSignIn } from '@/app/actions/auth'
+import { handleCredentialsSignIn, handleCredentialsSignUp } from '@/app/actions/auth'
 import { Loader2, Mail, Lock, User, AlertCircle } from 'lucide-react'
 
 export function AuthForm() {
@@ -152,25 +152,6 @@ export function AuthForm() {
           )}
         </button>
       </form>
-
-      {/* Separator */}
-      <div className="flex items-center text-text-muted/30 text-xs font-semibold uppercase tracking-wider before:content-[''] before:flex-1 before:h-[1px] before:bg-border-color before:mr-4 after:content-[''] after:flex-1 after:h-[1px] after:bg-border-color after:ml-4">
-        Ou
-      </div>
-
-      {/* Google Sign-in */}
-      <button
-        onClick={() => handleGoogleSignIn()}
-        className="w-full bg-white hover:bg-neutral-100 text-neutral-900 border border-neutral-200 py-3.5 px-5 rounded-xl text-sm font-semibold flex items-center justify-center gap-3 shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-primary/5 active:translate-y-0 cursor-pointer"
-      >
-        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
-          <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v3.92h6.69a5.74 5.74 0 0 1-2.48 3.77v3.12h4.01c2.34-2.16 3.69-5.32 3.69-8.74z"/>
-          <path fill="#34A853" d="M12 24c3.24 0 5.97-1.08 7.96-2.91l-4.01-3.12c-1.12.75-2.54 1.19-3.95 1.19-3.05 0-5.63-2.06-6.55-4.83H1.31v3.22A12 12 0 0 0 12 24z"/>
-          <path fill="#FBBC05" d="M5.45 14.33a7.14 7.14 0 0 1 0-4.66V6.45H1.31a12 12 0 0 0 0 11.1l4.14-3.22z"/>
-          <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.25 2.69 1.31 6.45l4.14 3.22c.92-2.77 3.5-4.83 6.55-4.83z"/>
-        </svg>
-        Continuer avec Google
-      </button>
     </div>
   )
 }

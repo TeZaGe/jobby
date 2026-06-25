@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🚀 Boardify - CRM de Recherche d'Emploi (Version Locale / Production)
 
-## Getting Started
+Cette branche (`local-prod`) est configurée pour fonctionner de manière **100% locale** et autonome. Elle retire la dépendance à Google OAuth pour s'appuyer uniquement sur l'authentification sécurisée classique (Email / Mot de passe) et utilise la base de données PostgreSQL incluse dans Docker.
 
-First, run the development server:
+---
 
+## 🛠️ Prérequis
+
+Avant de lancer l'application, assurez-vous d'avoir installé sur votre machine :
+1. [Node.js](https://nodejs.org/) (Version 18 ou supérieure recommandée)
+2. [Docker Desktop](https://www.docker.com/products/docker-desktop/) (pour exécuter la base de données locale)
+
+---
+
+## 📋 Étapes d'Installation & Lancement Local
+
+Suivez ces instructions pour compiler et exécuter l'application sur votre PC.
+
+### 1. Démarrer la base de données locale (Docker)
+Ouvrez votre terminal à la racine du projet et lancez le conteneur de base de données PostgreSQL :
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+docker compose up -d
+```
+*Le conteneur PostgreSQL démarrera en arrière-plan sur le port local `5433`.*
+
+### 2. Configurer le fichier d'environnement (.env)
+Dupliquez le fichier `.env.example` et renommez-le en `.env` à la racine du projet. Remplissez-le avec les paramètres locaux suivants :
+```env
+# Connexion à la base de données locale Docker PostgreSQL (Port 5433)
+DATABASE_URL="postgresql://postgres:postgres_password@localhost:5433/boardify?schema=public"
+
+# Secret NextAuth.js (Générez une chaîne aléatoire sécurisée)
+AUTH_SECRET="votre_cle_secrete_aleatoire_de_minimum_32_caracteres"
+NEXTAUTH_URL="http://localhost:3000"
+
+# URL de l'API locale
+NEXT_PUBLIC_API_URL="http://localhost:3000"
+
+# Clé API Google Maps (Recommandé pour afficher les cartes interactives)
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY="AIzaSyACZPOdiJamOGaGW1sf27tpPOQYkaQLnI0"
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 3. Synchroniser la base de données (Prisma)
+Exécutez la commande suivante pour créer les tables de la base de données locales à partir du schéma Prisma :
+```bash
+npx prisma db push
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 4. Compiler l'application pour la production
+Générez le build optimisé de production :
+```bash
+npm run build
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 5. Lancer le serveur local de production
+Démarrez l'application localement :
+```bash
+npm run start
+```
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 💻 Accès à l'application
+Une fois le serveur démarré, ouvrez votre navigateur et accédez à :
+👉 **[http://localhost:3000](http://localhost:3000)**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+* Créez votre compte directement en cliquant sur **"Créer un compte"** via le formulaire classique (Email / Mot de passe).
+* Toutes vos données de candidatures, CV, notes et rappels de tâches seront sauvegardées de manière sécurisée en local dans votre conteneur Docker.
